@@ -192,7 +192,10 @@ const useReportFetchWithFilter = ({ baseUrl, columns, filters = [], limit: initi
     } = {}) => {
 
         const params = new URLSearchParams();
-
+        // ✅ fetch all rows
+        if (downloadMode === "all") {
+            params.set("limit", "all");
+        }
         // pagination
         if (includePagination) {
             params.append("limit", String(limit));
@@ -358,28 +361,32 @@ const useReportFetchWithFilter = ({ baseUrl, columns, filters = [], limit: initi
             controller.abort();
         };
     }, [baseUrl, limit, skip, search, sortOrder, sortBy, selectedClass, selectedSection, selectedClasses, selectedSections, filtersState,]);
-
+    // ! not using export to exce 
     const exportToExcel = async () => {
         try {
-            const params = new URLSearchParams();
+            // const params = new URLSearchParams();
 
-            params.append("limit", 0);
+            // params.append("limit", 0);
 
-            if (search.trim()) {
-                params.append("search", search);
-            }
+            // if (search.trim()) {
+            //     params.append("search", search);
+            // }
 
-            if (sortBy) {
-                params.append("sortBy", sortBy);
-                params.append("order", sortOrder);
-            }
-            if (selectedClass) {
-                params.append("class", selectedClass);
-            }
+            // if (sortBy) {
+            //     params.append("sortBy", sortBy);
+            //     params.append("order", sortOrder);
+            // }
+            // if (selectedClass) {
+            //     params.append("class", selectedClass);
+            // }
 
-            if (selectedSection) {
-                params.append("section", selectedSection);
-            }
+            // if (selectedSection) {
+            //     params.append("section", selectedSection);
+            // }
+            const params = buildQueryParams({
+                includePagination: false,
+            });
+
             const url = `${baseUrl}?${params.toString()}`;
 
             const res = await fetch(url);
@@ -423,49 +430,58 @@ const useReportFetchWithFilter = ({ baseUrl, columns, filters = [], limit: initi
             console.error("Export failed", err);
         }
     };
-    const handleDownload = async (mode = "filtered") => {
+    // ! using this now 
+    const handleDownload = async ({ mode = "filtered" ,fileType="csv"}) => {
 
         try {
 
-            const params = new URLSearchParams();
+            // const params = new URLSearchParams();
 
-            // always fetch everything if "all"
-            if (mode === "all") {
-                // params.append("limit", 0);
-            } else {
-                params.append("limit", limit);
-                params.append("skip", skip);
-            }
+            // // always fetch everything if "all"
+            // if (mode === "all") {
+            // // params.append("limit", 0);
+            // } else {
+            //     params.append("limit", limit);
+            //     params.append("skip", skip);
+            // }
 
-            // apply filters only for filtered mode
-            if (mode === "filtered") {
+            // // apply filters only for filtered mode
+            // if (mode === "filtered") {
 
-                if (search.trim()) {
-                    params.append("search", search);
-                }
+            //     if (search.trim()) {
+            //         params.append("search", search);
+            //     }
 
-                if (sortBy) {
-                    params.append("sortBy", sortBy);
-                    params.append("order", sortOrder);
-                }
+            //     if (sortBy) {
+            //         params.append("sortBy", sortBy);
+            //         params.append("order", sortOrder);
+            //     }
 
-                if (selectedClass) {
-                    params.append("class", selectedClass);
-                }
+            //     if (selectedClass) {
+            //         params.append("class", selectedClass);
+            //     }
 
-                if (selectedSection) {
-                    params.append("section", selectedSection);
-                }
+            //     if (selectedSection) {
+            //         params.append("section", selectedSection);
+            //     }
 
-                if (selectedClasses.length) {
-                    params.append("classes", selectedClasses.join(","));
-                }
+            //     if (selectedClasses.length) {
+            //         params.append("classes", selectedClasses.join(","));
+            //     }
 
-                if (selectedSections.length) {
-                    params.append("sections", selectedSections.join(","));
-                }
-            }
+            //     if (selectedSections.length) {
+            //         params.append("sections", selectedSections.join(","));
+            //     }
+            // }
+            const includePagination = mode !== "all";
 
+            const includeFilters = mode === "filtered";
+
+            const params = buildQueryParams({
+
+                includePagination,
+                includeFilters,
+            });
             const url = `${baseUrl}?${params.toString()}`;
 
             const res = await fetch(url);
@@ -740,7 +756,7 @@ const useReportFetchWithFilter = ({ baseUrl, columns, filters = [], limit: initi
                 {/* Button */}
                 <button
                     onClick={() =>
-                        handleDownload(downloadMode)
+                        handleDownload({ mode: downloadMode })
                     }
                     style={{
                         background: "#2b2b2b",

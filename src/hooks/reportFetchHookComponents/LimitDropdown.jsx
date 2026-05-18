@@ -37,7 +37,7 @@ const LimitDropdown = ({ value, onChange }) => {
             ref={wrapperRef}
             style={{
                 position: "relative",
-                width: "20%",
+                width: "15%",
                 // maxWidth: "180px",
             }}
         >

@@ -102,7 +102,7 @@ const MultiSelectDropdown = ({
             tabIndex={0}
             onKeyDown={handleKeyDown}
             style={{
-                // width: "260px",
+                // width: "10rem",
                 position: "relative",
                 color: "#e5e5e5",
                 fontFamily: "sans-serif",
@@ -197,7 +197,7 @@ const MultiSelectDropdown = ({
                             }
                             placeholder="Search..."
                             style={{
-                                width: "100%",
+                                width: "80%",
                                 padding: "6px 8px",
                                 borderRadius: "4px",
                                 border: "1px solid #2a2a2a",
